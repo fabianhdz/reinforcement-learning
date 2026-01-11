@@ -1,0 +1,50 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+*.ipynb
+.DS_Store
+.jupyter/
+.vscode/
+.idea/
+
+# Local credentials
+.env
+.env.*
+!.env.example
+.aws/
+
+# Datasets and training artifacts
+data/
+datasets/
+oxford-iiit-pet/
+*.csv
+!/SOURCE_MAP.csv
+*.hdf5
+*.h5
+*.pth
+*.pt
+*.ckpt
+*.zip
+*.png
+*.jpg
+*.jpeg
+*.mkv
+*.mp4
+runs/
+logs/
+wandb/
+events.out.tfevents.*
+*.log
+*.out.*
+
+# Lecture and written materials
+*.pdf
+*.pptx
+*.docx
