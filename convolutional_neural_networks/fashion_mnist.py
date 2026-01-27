@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week2/5-2_Example_FashionMNIST.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 3]
+# %%
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -15,16 +12,16 @@ import torchvision.transforms as transforms # for data preprocessing
 from torch.utils.data import Dataset, DataLoader
 from torchsummary import summary
 
-# %% [code cell 5]
+# %%
 train_dataset = torchvision.datasets.FashionMNIST('./data', download=True, transform=transforms.Compose([transforms.ToTensor()]))
 test_dataset = torchvision.datasets.FashionMNIST('./data', download=True, train=False, transform=transforms.Compose([transforms.ToTensor()]))
 
-# %% [code cell 8]
+# %%
 batch_size = 1000
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
 
-# %% [code cell 11]
+# %%
 labels_map = {0:'T-Shirt', 1:'Trouser', 2:'Pullover', 3:'Dress', 4:'Coat', 5:'Sandal', 6:'Shirt', 7:'Sneaker', 8:'Bag', 9:'Ankle Boot'} # 10 classes
 fig = plt.figure(figsize=(8,8))
 columns = 4
@@ -38,7 +35,7 @@ for i in range(1, columns*rows + 1):
     plt.imshow(img, cmap='gray')
 plt.show()
 
-# %% [code cell 13]
+# %%
 class FashionDNN1(nn.Module):
     def __init__(self):
         super(FashionDNN1, self).__init__()
@@ -54,7 +51,7 @@ class FashionDNN1(nn.Module):
         out = self.fc3(out)
         return out
 
-# %% [code cell 16]
+# %%
 class FashionDNN2(nn.Module):
     def __init__(self):
         super(FashionDNN2, self).__init__()
@@ -76,7 +73,7 @@ class FashionDNN2(nn.Module):
         out = self.layer3(out)
         return out
 
-# %% [code cell 19]
+# %%
 class FashionDNN3(nn.Module):
     def __init__(self):
         super(FashionDNN3, self).__init__()
@@ -108,7 +105,7 @@ class FashionDNN3(nn.Module):
 model = FashionDNN3()
 #summary(model, (1, 28, 28))
 
-# %% [code cell 21]
+# %%
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = FashionDNN3().to(device)
 
@@ -138,7 +135,7 @@ for epoch in range(1, n_epoch+1):
         optimizer.step()
     print('epoch: {}, loss:{}, acc:{}'.format(epoch, sum(train_losses)/(idx+1), sum(train_acc)/(idx+1) ))
 
-# %% [code cell 22]
+# %%
 test_acc = []
 for i, (x, y) in enumerate(test_loader):
     x = x.to(device)

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week4/12-3_dnn.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

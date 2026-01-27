@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week3/11-6_MC.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import random
 import numpy as np
 

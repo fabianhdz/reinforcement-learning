@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week2/4-5-Pytorch_Define_Model.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 4]
+# %%
 import torch.nn as nn
 
 class Model(nn.Module):
@@ -24,7 +21,7 @@ class Model(nn.Module):
 
 model = Model()
 
-# %% [code cell 5]
+# %%
 import torch.nn.functional as F
 
 class Model2(nn.Module):

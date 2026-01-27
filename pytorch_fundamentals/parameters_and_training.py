@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week2/4-6-Pytorch_Model_parameter_settings_and_training.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 13]
+# %%
 import pandas as pd
 import torch
 from torch.utils.data import Dataset

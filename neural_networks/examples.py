@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week3/3-NN.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import torch
 import torch.nn as nn
 
@@ -23,7 +20,7 @@ class SimpleNN(nn.Module):
 model = SimpleNN()
 print(model)
 
-# %% [code cell 2]
+# %%
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -62,7 +59,7 @@ with torch.no_grad():
     predicted = model(X).round()
     print(f'Predicted (Single-Layer):\n{predicted}')
 
-# %% [code cell 3]
+# %%
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -103,7 +100,7 @@ with torch.no_grad():
     predicted = model(X).round()
     print(f'Predicted:\n{predicted}')
 
-# %% [code cell 4]
+# %%
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -120,7 +117,7 @@ plt.ylabel('Output')
 plt.grid()
 plt.show()
 
-# %% [code cell 5]
+# %%
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -137,7 +134,7 @@ plt.ylabel('Output')
 plt.grid()
 plt.show()
 
-# %% [code cell 6]
+# %%
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -160,7 +157,7 @@ plt.legend()
 plt.grid()
 plt.show()
 
-# %% [code cell 7]
+# %%
 import torch
 import torch.nn as nn
 
@@ -180,7 +177,7 @@ class ImageClassifier(nn.Module):
 model = ImageClassifier()
 print(model)
 
-# %% [code cell 8]
+# %%
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -244,7 +241,7 @@ with torch.no_grad():
     accuracy = (test_predictions == y_test).sum().item() / y_test.size(0)
     print(f'Test Accuracy: {accuracy * 100:.2f}%')
 
-# %% [code cell 9]
+# %%
 class SimpleNN(nn.Module):
     def __init__(self):
         super(SimpleNN, self).__init__()
@@ -263,7 +260,7 @@ class SimpleNN(nn.Module):
 model = SimpleNN()
 print(model)
 
-# %% [code cell 10]
+# %%
 import torch
 
 # Creating a tensor
@@ -282,7 +279,7 @@ print(x)
 x = torch.randn(2, 2)
 print(x)
 
-# %% [code cell 11]
+# %%
 # Tensor addition
 a = torch.tensor([1, 2, 3])
 b = torch.tensor([4, 5, 6])
@@ -293,7 +290,7 @@ print(c)  # tensor([5, 7, 9])
 d = a * b
 print(d)  # tensor([ 4, 10, 18])
 
-# %% [code cell 12]
+# %%
 # Move tensor to GPU if available
 x = torch . tensor ([1 , 2, 3])
 if torch.cuda.is_available():
@@ -301,7 +298,7 @@ if torch.cuda.is_available():
     x = x.to(device)
     print(x)
 
-# %% [code cell 13]
+# %%
 # Example of automatic differentiation
 x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
 y = x + 2
@@ -312,7 +309,7 @@ z = z.mean()
 z.backward()
 print(x.grad)  # tensor([4.0000, 5.3333, 6.6667])
 
-# %% [code cell 14]
+# %%
 import torch
 import torch.nn as nn
 import torch.optim as optim

@@ -1,10 +1,6 @@
-# Monte Carlo learning
+# Monte Carlo
 
-GridWorld prediction and control using Monte Carlo returns.
+GridWorld agents that learn from episode returns.
 
-| Python file | Original source |
-| --- | --- |
-| [prediction.py](prediction.py) | `Week3/11-6_MC.ipynb` |
-| [control.py](control.py) | `Week3/11-9_MC_control.ipynb` |
-
-Original implementations and unfinished work are preserved. Notebook exports retain code cell order and code comments; lecture markdown and outputs are omitted.
+- [prediction.py](prediction.py): state-value estimation.
+- [control.py](control.py): action-value learning and policy improvement.

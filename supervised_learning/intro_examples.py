@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week1/1-3-code.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -41,7 +38,7 @@ for epoch in range(1000):
 predicted = model(X).detach().numpy()  # Get the model predictions
 print(predicted)  # Print the predicted prices
 
-# %% [code cell 2]
+# %%
 from sklearn.model_selection import train_test_split
 
 # Prepare the data
@@ -58,7 +55,7 @@ print(f'Training set size: {len(X_train)}')
 print(f'Validation set size: {len(X_val)}')
 print(f'Test set size: {len(X_test)}')
 
-# %% [code cell 3]
+# %%
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -92,7 +89,7 @@ print(f'Recall: {recall:.2f}')
 print(f'F1 Score: {f1:.2f}')
 print('Classification Report:\n', classification_report(y_test, y_pred))
 
-# %% [code cell 4]
+# %%
 import numpy as np
 import pandas as pd
 
@@ -112,11 +109,11 @@ df = pd.DataFrame(data)
 # Display the DataFrame
 print(df)
 
-# %% [code cell 5]
+# %%
 X = df[['study_hours']].values  # Features
 y = df['scores'].values  # Labels
 
-# %% [code cell 6]
+# %%
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -160,7 +157,7 @@ for epoch in range(num_epochs):
 predicted = model(X_train).detach().numpy()  # Detach the predictions from the computational graph and convert to numpy array
 print(predicted)
 
-# %% [code cell 7]
+# %%
 import matplotlib.pyplot as plt
 
 # Compare predicted values with actual values

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week4/12-5-dqn.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 
 import gym
 import collections
@@ -22,7 +19,7 @@ gamma         = 0.98
 buffer_limit  = 50000
 batch_size    = 32
 
-# %% [code cell 2]
+# %%
 class ReplayBuffer():
     def __init__(self):
         self.buffer = collections.deque(maxlen=buffer_limit)
@@ -49,7 +46,7 @@ class ReplayBuffer():
     def size(self):
         return len(self.buffer)
 
-# %% [code cell 3]
+# %%
 class Qnet(nn.Module):
     def __init__(self):
         super(Qnet, self).__init__()
@@ -71,7 +68,7 @@ class Qnet(nn.Module):
         else :
             return out.argmax().item()
 
-# %% [code cell 4]
+# %%
 def train(q, q_target, memory, optimizer):
     for i in range(10):
         s,a,r,s_prime,done_mask = memory.sample(batch_size)
@@ -86,7 +83,7 @@ def train(q, q_target, memory, optimizer):
         loss.backward()
         optimizer.step()
 
-# %% [code cell 5]
+# %%
 def main():
 
     env = gym.make('CartPole-v1')

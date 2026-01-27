@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week2/4-7-Pytorch_MNIST_Lab_full.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import torchvision.transforms as transforms
 
 mnist_transform = transforms.Compose([
@@ -21,7 +18,7 @@ test_dataset = MNIST(download_root, transform=mnist_transform, train=False, down
 batch_size = 200
 dataset_train = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
-# %% [code cell 2]
+# %%
 import torch.nn as nn
 
 class Model(nn.Module):
@@ -54,7 +51,7 @@ class Model(nn.Module):
 model = Model()
 
 
-# %% [code cell 3]
+# %%
 from torch.optim import optimizer
 import torch
 import numpy as np
@@ -79,7 +76,7 @@ for epoch in range(1, n_epoch+1):
         #scheduler.step()
     print('epoch: {}, loss:{}, acc:{}'.format(epoch, sum(train_losses)/(idx+1), sum(train_acc)/(idx+1) ))
 
-# %% [code cell 4]
+# %%
 dataset_test = DataLoader(test_dataset, batch_size=batch_size)
 test_acc = []
 for i, (x, y) in enumerate(dataset_test):

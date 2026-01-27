@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week6/actor_critic_new.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
-# !pip install gymnasium
+# %%
+# pip install gymnasium
 
-# %% [code cell 2]
+# %%
 import gymnasium as gym
 import torch
 import torch.nn as nn

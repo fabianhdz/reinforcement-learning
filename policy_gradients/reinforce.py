@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week6/REINFORCEMENT.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import gym
 import torch
 import torch.nn as nn
@@ -15,7 +12,7 @@ from torch.distributions import Categorical
 learning_rate = 0.0002
 gamma         = 0.98
 
-# %% [code cell 2]
+# %%
 class Policy(nn.Module):
     def __init__(self):
         super(Policy, self).__init__()
@@ -43,7 +40,7 @@ class Policy(nn.Module):
         self.optimizer.step()
         self.data = []
 
-# %% [code cell 3]
+# %%
 def main():
     env = gym.make('CartPole-v1')
     pi = Policy()

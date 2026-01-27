@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week3/11-9_MC_control.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import random
 import numpy as np
 
@@ -74,7 +71,7 @@ class GridWorld():
         return (self.x, self.y)
 
 
-# %% [code cell 2]
+# %%
 class QAgent():
     def __init__(self):
         self.q_table = np.zeros((5, 7, 4))
@@ -116,7 +113,7 @@ class QAgent():
         print(data)
 
 
-# %% [code cell 3]
+# %%
 def main():
     env = GridWorld()
     agent = QAgent()

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week4/12-2_function.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import numpy as np
 import matplotlib.pyplot as plt
 import random
@@ -17,7 +14,7 @@ for i in range(5, 35):
     y = f(x) + (random.random()-0.5) * 20
     rand_data.append([x, y])
 
-# %% [code cell 2]
+# %%
 data = np.array(rand_data)
 x = data[:, 0]
 y = data[:, 1]

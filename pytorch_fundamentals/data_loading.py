@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week2/4-4-Pytorch_Data_Loading.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 5]
+# %%
 import torchvision.transforms as transforms
 
 mnist_transform = transforms.Compose([
@@ -23,7 +20,7 @@ for x, y in dataset:
     print('x =', x)
     print('y =', y)
 
-# %% [code cell 9]
+# %%
 import pandas as pd
 import torch
 from torch.utils.data import Dataset

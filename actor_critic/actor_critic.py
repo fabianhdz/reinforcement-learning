@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Source notebook: Reinforcement Learning/Week6/actor-critic.ipynb
-# Code cells are preserved in notebook order; markdown and outputs are omitted.
-# Notebook shell commands are retained as comments for use from a terminal.
 
-# %% [code cell 1]
+# %%
 import gym
 import torch
 import torch.nn as nn
@@ -16,7 +13,7 @@ learning_rate = 0.0002
 gamma         = 0.98
 n_rollout     = 10
 
-# %% [code cell 2]
+# %%
 class ActorCritic(nn.Module):
     def __init__(self):
         super(ActorCritic, self).__init__()
@@ -71,7 +68,7 @@ class ActorCritic(nn.Module):
         loss.mean().backward()
         self.optimizer.step()
 
-# %% [code cell 3]
+# %%
 def main():
     env = gym.make('CartPole-v1')
     model = ActorCritic()

@@ -1,14 +1,7 @@
-# Policy gradients
+# Policy Gradients
 
-REINFORCE and policy-based CartPole examples, including the modified notebook version.
+REINFORCE and policy-based CartPole agents.
 
-| Python file | Original source |
-| --- | --- |
-| [reinforce.py](reinforce.py) | `Week6/REINFORCEMENT.ipynb` |
-| [policy_based.py](policy_based.py) | `Week6/policy_based.ipynb` |
-| [policy_based_modified.py](policy_based_modified.py) | `Week6/policy_based_modified.ipynb` |
-| [reinforce_cartpole.py](reinforce_cartpole.py) | `Week6/reinforce_cartpole.py` |
-
-Original implementations and unfinished work are preserved. Notebook exports retain code cell order and code comments; lecture markdown and outputs are omitted.
-
-The original REINFORCE notebook uses `gym`; the other versions use `gymnasium`. Notebook `!pip install` lines are preserved as comments.
+- [reinforce.py](reinforce.py): REINFORCE using Gym.
+- [policy_based.py](policy_based.py) and [policy_based_modified.py](policy_based_modified.py): Gymnasium policy-gradient variants.
+- [reinforce_cartpole.py](reinforce_cartpole.py): a Gymnasium CartPole agent.

@@ -1,14 +1,8 @@
-# Neural networks
+# Neural Networks
 
-XOR, fully connected MNIST models, activation functions, classification examples, and dropout.
+- [xor.py](xor.py): learning XOR with a small network.
+- [mnist.py](mnist.py): fully connected digit classification.
+- [dropout.py](dropout.py): dropout in a neural network.
+- [examples.py](examples.py): activation functions, perceptrons, multilayer networks, and classification.
 
-| Python file | Original source |
-| --- | --- |
-| [xor.py](xor.py) | `Week2/4-3-XOR_problem.ipynb` |
-| [mnist.py](mnist.py) | `Week2/4-7-Pytorch_MNIST_Lab_full.ipynb` |
-| [dropout.py](dropout.py) | `Week2/5-5_dropout.ipynb` |
-| [examples.py](examples.py) | `Week3/3-NN.ipynb` |
-
-Original implementations and unfinished work are preserved. Notebook exports retain code cell order and code comments; lecture markdown and outputs are omitted.
-
-Notebook examples remain together in their original cell order, including repeated model definitions. MNIST examples may download data when run.
+MNIST examples download their data when run.

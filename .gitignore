@@ -25,7 +25,6 @@ data/
 datasets/
 oxford-iiit-pet/
 *.csv
-!/SOURCE_MAP.csv
 *.hdf5
 *.h5
 *.pth
@@ -44,7 +43,7 @@ events.out.tfevents.*
 *.log
 *.out.*
 
-# Lecture and written materials
+# Documents
 *.pdf
 *.pptx
 *.docx
