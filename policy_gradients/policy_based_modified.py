@@ -38,16 +38,16 @@ class Policy(nn.Module):
     # Function to train the policy network
     def train_net(self):
         R = 0
-        loss_sum = 0  # 누적 손실을 저장할 변수
-        for r, prob in self.data[::-1]:  # 역순으로 데이터를 가져와서
-            R = r + gamma * R  # 할인된 보상을 계산
-            loss = -torch.log(prob) * R  # 손실 계산
-            loss_sum += loss  # 누적 손실 계산
+        loss_sum = 0  # Accumulate the loss
+        for r, prob in self.data[::-1]:  # Process stored data in reverse order
+            R = r + gamma * R  # Compute the discounted return
+            loss = -torch.log(prob) * R  # Compute the loss
+            loss_sum += loss  # Add to the total loss
 
-        self.optimizer.zero_grad()  # 경사 초기화
-        loss_sum.backward()  # 역전파 (한 번만 호출)
-        self.optimizer.step()  # 매개변수 업데이트 (한 번만 호출)
-        self.data = []  # 데이터
+        self.optimizer.zero_grad()  # Clear gradients
+        loss_sum.backward()  # Backpropagate once
+        self.optimizer.step()  # Update parameters once
+        self.data = []  # Clear stored data
 # Main function definition
 def main():
     # Create gymnasium environment

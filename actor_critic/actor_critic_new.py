@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
-import numpy as np  # numpy 추가
+import numpy as np  # Import NumPy
 
 # Hyperparameters
 learning_rate = 0.0002
@@ -47,21 +47,21 @@ class ActorCritic(nn.Module):
         s_lst, a_lst, r_lst, s_prime_lst, done_lst = [], [], [], [], []
         for transition in self.data:
             s, a, r, s_prime, done = transition
-            s_lst.append(np.array(s))  # 상태를 numpy 배열로 변환하여 저장
+            s_lst.append(np.array(s))  # Store the state as a NumPy array
             a_lst.append([a])
             r_lst.append([r / 100.0])
-            s_prime_lst.append(np.array(s_prime))  # 다음 상태도 numpy 배열로 변환
+            s_prime_lst.append(np.array(s_prime))  # Convert the next state to a NumPy array
             done_mask = 0.0 if done else 1.0
             done_lst.append([done_mask])
 
-        # numpy 배열을 텐서로 변환
+        # Convert NumPy arrays to tensors
         s_batch = torch.tensor(np.array(s_lst), dtype=torch.float32)
         a_batch = torch.tensor(a_lst)
         r_batch = torch.tensor(r_lst, dtype=torch.float32)
         s_prime_batch = torch.tensor(np.array(s_prime_lst), dtype=torch.float32)
         done_batch = torch.tensor(done_lst, dtype=torch.float32)
 
-        self.data = []  # 데이터 초기화
+        self.data = []  # Clear stored transitions
         return s_batch, a_batch, r_batch, s_prime_batch, done_batch
 
 

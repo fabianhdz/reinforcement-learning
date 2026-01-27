@@ -1,4 +1,4 @@
-import gymnasium as gym  # gym 대신 gymnasium 사용
+import gymnasium as gym  # Use Gymnasium
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -102,18 +102,18 @@ def main():
     print_interval = 20
 
     for n_epi in range(1000):
-        # Gymnasium의 reset()은 상태와 정보를 반환하므로 이를 수정
+        # Gymnasium reset() returns the observation and info
         s, _ = env.reset()
         done = False
         truncated = False
-        while not (done or truncated):  # done과 truncated 모두 확인
+        while not (done or truncated):  # Check both termination and truncation
             for t in range(T_horizon):
                 prob = model.pi(torch.from_numpy(s).float())
                 m = Categorical(prob)
                 a = m.sample().item()
                 s_prime, r, done, truncated, info = env.step(a)
 
-                model.put_data((s, a, r / 100.0, s_prime, prob[a].item(), done or truncated))  # 종료 조건에 truncated 포함
+                model.put_data((s, a, r / 100.0, s_prime, prob[a].item(), done or truncated))  # Include truncation in the end condition
                 s = s_prime
 
                 score += r
