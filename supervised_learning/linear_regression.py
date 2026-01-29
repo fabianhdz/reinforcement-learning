@@ -1,21 +1,29 @@
-# -*- coding: utf-8 -*-
+"""Evaluate a linear regression model and its mean squared error."""
 
-# %%
 import numpy as np
-a_and_b = np.array([3.4, 77]) # a and b
-data = np.array([[2, 81], [4, 93], [6, 91], [8, 97]])
-train_x = data[:, 0]
-train_y = data[:, 1]
 
-# %%
-print(a_and_b)
 
-# %%
-print(data)
+def predict(x, slope, intercept):
+    return slope * np.asarray(x) + intercept
 
-# %%
-print(   a_and_b[0] * train_x + a_and_b[1]      )
 
-# %%
-mse = sum(((a_and_b[0] * train_x + a_and_b[1]) - train_y)**2)/len(train_x)
-print(mse)
+def mean_squared_error(actual, predicted):
+    return np.mean((np.asarray(predicted) - actual) ** 2)
+
+
+def main():
+    parameters = np.array([3.4, 77])
+    data = np.array([
+        [2, 81],
+        [4, 93],
+        [6, 91],
+        [8, 97],
+    ])
+    predictions = predict(data[:, 0], *parameters)
+    print(parameters)
+    print(data)
+    print(predictions)
+    print(mean_squared_error(data[:, 1], predictions))
+
+if __name__ == "__main__":
+    main()
