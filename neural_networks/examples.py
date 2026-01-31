@@ -1,8 +1,17 @@
-# -*- coding: utf-8 -*-
+"""Independent neural network, tensor, and activation function examples."""
 
-# %%
+import argparse
+
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
+
 
 class SimpleNN(nn.Module):
     def __init__(self):
@@ -17,19 +26,7 @@ class SimpleNN(nn.Module):
         x = self.fc3(x)              # Output layer (activation function applied in the loss function)
         return x
 
-model = SimpleNN()
-print(model)
 
-# %%
-import torch
-import torch.nn as nn
-import torch.optim as optim
-
-# XOR dataset
-X = torch.tensor([[0,0], [0,1], [1,0], [1,1]], dtype=torch.float32)
-y = torch.tensor([[0], [1], [1], [0]], dtype=torch.float32)
-
-# Define single-layer perceptron model
 class SingleLayerPerceptron(nn.Module):
     def __init__(self):
         super(SingleLayerPerceptron, self).__init__()
@@ -39,36 +36,7 @@ class SingleLayerPerceptron(nn.Module):
         x = torch.sigmoid(self.fc(x))  # Output layer with Sigmoid activation
         return x
 
-model = SingleLayerPerceptron()
-criterion = nn.MSELoss()
-optimizer = optim.SGD(model.parameters(), lr=0.1)
 
-# Training
-num_epochs = 10000
-for epoch in range(num_epochs):
-    optimizer.zero_grad()
-    outputs = model(X)
-    loss = criterion(outputs, y)
-    loss.backward()
-    optimizer.step()
-    if (epoch+1) % 1000 == 0:
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
-
-# Prediction results
-with torch.no_grad():
-    predicted = model(X).round()
-    print(f'Predicted (Single-Layer):\n{predicted}')
-
-# %%
-import torch
-import torch.nn as nn
-import torch.optim as optim
-
-# XOR dataset
-X = torch.tensor([[0,0], [0,1], [1,0], [1,1]], dtype=torch.float32)
-y = torch.tensor([[0], [1], [1], [0]], dtype=torch.float32)
-
-# Define MLP model
 class XOR_MLP(nn.Module):
     def __init__(self):
         super(XOR_MLP, self).__init__()
@@ -80,86 +48,6 @@ class XOR_MLP(nn.Module):
         x = torch.sigmoid(self.fc2(x))  # Output layer with Sigmoid activation
         return x
 
-model = XOR_MLP()
-criterion = nn.MSELoss()
-optimizer = optim.SGD(model.parameters(), lr=0.05)
-
-# Training
-num_epochs = 50000
-for epoch in range(num_epochs):
-    optimizer.zero_grad()
-    outputs = model(X)
-    loss = criterion(outputs, y)
-    loss.backward()
-    optimizer.step()
-    if (epoch+1) % 5000 == 0:
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
-
-# Prediction results
-with torch.no_grad():
-    predicted = model(X).round()
-    print(f'Predicted:\n{predicted}')
-
-# %%
-import numpy as np
-import matplotlib.pyplot as plt
-
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-x = np.linspace(-10, 10, 100)
-y = sigmoid(x)
-
-plt.plot(x, y)
-plt.title('Sigmoid Function')
-plt.xlabel('Input')
-plt.ylabel('Output')
-plt.grid()
-plt.show()
-
-# %%
-import numpy as np
-import matplotlib.pyplot as plt
-
-def tanh(x):
-    return np.tanh(x)
-
-x = np.linspace(-10, 10, 100)
-y = tanh(x)
-
-plt.plot(x, y)
-plt.title('Tanh Function')
-plt.xlabel('Input')
-plt.ylabel('Output')
-plt.grid()
-plt.show()
-
-# %%
-import numpy as np
-import matplotlib.pyplot as plt
-
-def relu(x):
-    return np.maximum(0, x)
-
-def leaky_relu(x, alpha=0.01):
-    return np.where(x > 0, x, x * alpha)
-
-x = np.linspace(-10, 10, 100)
-y_relu = relu(x)
-y_leaky_relu = leaky_relu(x)
-
-plt.plot(x, y_relu, label='ReLU')
-plt.plot(x, y_leaky_relu, label='Leaky ReLU')
-plt.title('ReLU and Leaky ReLU Functions')
-plt.xlabel('Input')
-plt.ylabel('Output')
-plt.legend()
-plt.grid()
-plt.show()
-
-# %%
-import torch
-import torch.nn as nn
 
 class ImageClassifier(nn.Module):
     def __init__(self):
@@ -174,41 +62,7 @@ class ImageClassifier(nn.Module):
         x = torch.softmax(self.fc3(x), dim=1)  # Output layer + Softmax activation function
         return x
 
-model = ImageClassifier()
-print(model)
 
-# %%
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-from sklearn.datasets import load_iris
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-
-# Loading the Iris dataset
-iris = load_iris()
-X, y = iris.data, iris.target  # Now including all three classes: 0, 1, 2
-
-# Splitting into train and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Scaling the features
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-# Converting to PyTorch tensors
-X_train = torch.tensor(X_train, dtype=torch.float32)
-y_train = torch.tensor(y_train, dtype=torch.long)  # No need to unsqueeze, using CrossEntropyLoss
-X_test = torch.tensor(X_test, dtype=torch.float32)
-y_test = torch.tensor(y_test, dtype=torch.long)  # No need to unsqueeze, using CrossEntropyLoss
-
-# Creating DataLoader for training data
-train_dataset = TensorDataset(X_train, y_train)
-train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)  # Using batch size of 1 for pure SGD
-
-# Defining the model
 class SimpleModel(nn.Module):
     def __init__(self):
         super(SimpleModel, self).__init__()
@@ -217,34 +71,10 @@ class SimpleModel(nn.Module):
     def forward(self, x):
         return self.linear(x)
 
-model = SimpleModel()
-criterion = nn.CrossEntropyLoss()  # CrossEntropyLoss for multi-class classification
-optimizer = optim.SGD(model.parameters(), lr=0.005)
 
-# Training loop
-num_epochs = 5000
-for epoch in range(num_epochs):
-    for batch_x, batch_y in train_dataloader:
-        optimizer.zero_grad()
-        outputs = model(batch_x)
-        loss = criterion(outputs, batch_y)
-        loss.backward()
-        optimizer.step()
-
-    if (epoch + 1) % 100 == 0:
-        print(f'Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}')
-
-# Evaluating on the test set
-with torch.no_grad():
-    test_outputs = model(X_test)
-    _, test_predictions = torch.max(test_outputs, 1)  # Get the index of the max log-probability
-    accuracy = (test_predictions == y_test).sum().item() / y_test.size(0)
-    print(f'Test Accuracy: {accuracy * 100:.2f}%')
-
-# %%
-class SimpleNN(nn.Module):
+class BatchNormalizedNN(nn.Module):
     def __init__(self):
-        super(SimpleNN, self).__init__()
+        super(BatchNormalizedNN, self).__init__()
         self.fc1 = nn.Linear(784, 128)
         self.bn1 = nn.BatchNorm1d(128)
         self.fc2 = nn.Linear(128, 64)
@@ -257,99 +87,7 @@ class SimpleNN(nn.Module):
         x = self.fc3(x)
         return x
 
-model = SimpleNN()
-print(model)
 
-# %%
-import torch
-
-# Creating a tensor
-x = torch.tensor([1, 2, 3])
-print(x)
-
-# Creating a 3x3 matrix filled with zeros
-x = torch.zeros(3, 3)
-print(x)
-
-# Creating a 2x2 matrix filled with ones
-x = torch.ones(2, 2)
-print(x)
-
-# Creating a 2x2 matrix with random values from a normal distribution
-x = torch.randn(2, 2)
-print(x)
-
-# %%
-# Tensor addition
-a = torch.tensor([1, 2, 3])
-b = torch.tensor([4, 5, 6])
-c = a + b
-print(c)  # tensor([5, 7, 9])
-
-# Tensor multiplication
-d = a * b
-print(d)  # tensor([ 4, 10, 18])
-
-# %%
-# Move tensor to GPU if available
-x = torch . tensor ([1 , 2, 3])
-if torch.cuda.is_available():
-    device = torch.device('cuda')
-    x = x.to(device)
-    print(x)
-
-# %%
-# Example of automatic differentiation
-x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
-y = x + 2
-z = y * y * 2
-z = z.mean()
-
-# Perform backpropagation
-z.backward()
-print(x.grad)  # tensor([4.0000, 5.3333, 6.6667])
-
-# %%
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Set device to GPU if available
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f'Using device: {device}')
-
-# Data augmentation and preprocessing settings
-transform = transforms.Compose([
-    transforms.RandomRotation(10),  # Random rotation
-    transforms.RandomHorizontalFlip(),  # Random horizontal flip
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
-])
-
-# Load MNIST dataset
-train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
-test_dataset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
-
-# Set data loaders
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=1000, shuffle=False)
-
-# Visualize some data samples
-example_data, example_targets = next(iter(train_loader))
-for i in range(6):
-    plt.subplot(2, 3, i + 1)
-    plt.imshow(example_data[i][0], cmap='gray')
-    plt.title(f'Label: {example_targets[i].item()}')
-    plt.axis('off')
-plt.show()
-
-
-# Design MLP model
 class MNISTModel(nn.Module):
     def __init__(self):
         super(MNISTModel, self).__init__()
@@ -367,61 +105,260 @@ class MNISTModel(nn.Module):
         return x
 
 
-# Initialize model and move to GPU
-model = MNISTModel().to(device)
-print(model)
+def train_classifier(model, dataloader, optimizer, criterion, *, epochs,
+                     device=None, log_every=1):
+    """Train a classifier and return loss and accuracy for each epoch."""
+    if device is None:
+        device = next(model.parameters()).device
+    history = []
+    for epoch in range(1, epochs + 1):
+        model.train()
+        total_loss = correct = samples = batches = 0
+        for inputs, targets in dataloader:
+            inputs, targets = inputs.to(device), targets.to(device)
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+            correct += (outputs.argmax(dim=1) == targets).sum().item()
+            samples += targets.size(0)
+            batches += 1
+        if not samples:
+            raise ValueError("The training loader is empty")
+        metrics = {"loss": total_loss / batches, "accuracy": correct / samples}
+        history.append(metrics)
+        if log_every and epoch % log_every == 0:
+            print(f"Epoch {epoch}/{epochs}, loss: {metrics['loss']:.4f}, "
+                  f"accuracy: {metrics['accuracy']:.4f}")
+    return history
 
-# Set loss function and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-# Train the model
-num_epochs = 5
-for epoch in range(num_epochs):
-    model.train()
-    running_loss = 0.0
-    for batch_idx, (inputs, targets) in enumerate(train_loader):
-        inputs, targets = inputs.to(device), targets.to(device)  # Move data to GPU
+def evaluate_classifier(model, dataloader, *, device=None, collect_errors=False):
+    """Return accuracy and optionally misclassified images, predictions, and labels."""
+    if device is None:
+        device = next(model.parameters()).device
+    was_training = model.training
+    model.eval()
+    correct = samples = 0
+    errors = []
+    try:
+        with torch.no_grad():
+            for inputs, targets in dataloader:
+                inputs, targets = inputs.to(device), targets.to(device)
+                predictions = model(inputs).argmax(dim=1)
+                correct += (predictions == targets).sum().item()
+                samples += targets.size(0)
+                if collect_errors:
+                    for index in (predictions != targets).nonzero(as_tuple=True)[0]:
+                        errors.append((inputs[index].cpu(), predictions[index].item(),
+                                       targets[index].item()))
+    finally:
+        model.train(was_training)
+    if not samples:
+        raise ValueError("The evaluation loader is empty")
+    return correct / samples, errors
+
+
+def plot_image_grid(images, titles=None, *, columns=3, cmap="gray", figsize=None):
+    """Plot any number of images, hiding unused cells in the grid."""
+    images = list(images)
+    if not images:
+        return None
+    if columns < 1:
+        raise ValueError("columns must be positive")
+    if titles is not None and len(titles) != len(images):
+        raise ValueError("Each image must have a title")
+    rows = (len(images) + columns - 1) // columns
+    fig, axes = plt.subplots(rows, columns, squeeze=False, figsize=figsize)
+    for index, ax in enumerate(axes.flat):
+        ax.axis("off")
+        if index < len(images):
+            ax.imshow(images[index], cmap=cmap)
+            if titles is not None:
+                ax.set_title(titles[index])
+    fig.tight_layout()
+    return fig
+
+
+def show_models():
+    for model_type in (SimpleNN, ImageClassifier, BatchNormalizedNN):
+        print(model_type())
+
+
+def train_binary_model(model, features, targets, *, epochs, learning_rate, log_every):
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+    criterion = nn.MSELoss()
+    for epoch in range(epochs):
         optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
+        loss = criterion(model(features), targets)
         loss.backward()
         optimizer.step()
-        running_loss += loss.item()
+        if (epoch + 1) % log_every == 0:
+            print(f"Epoch [{epoch + 1}/{epochs}], Loss: {loss.item():.4f}")
+    with torch.no_grad():
+        predictions = model(features).round()
+    print(f"Predicted ({type(model).__name__}):\n{predictions}")
+    return predictions
 
-    print(f'Epoch [{epoch + 1}/{num_epochs}], Loss: {running_loss / len(train_loader):.4f}')
 
-# Evaluate model performance
-model.eval()
-correct = 0
-total = 0
-with torch.no_grad():
-    for inputs, targets in test_loader:
-        inputs, targets = inputs.to(device), targets.to(device)  # Move data to GPU
-        outputs = model(inputs)
-        _, predicted = torch.max(outputs.data, 1)
-        total += targets.size(0)
-        correct += (predicted == targets).sum().item()
+def run_xor_comparison(*, single_epochs=10000, multilayer_epochs=50000):
+    features = torch.tensor([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=torch.float32)
+    targets = torch.tensor([[0], [1], [1], [0]], dtype=torch.float32)
+    single = SingleLayerPerceptron()
+    multilayer = XOR_MLP()
+    train_binary_model(single, features, targets, epochs=single_epochs,
+                       learning_rate=0.1, log_every=1000)
+    train_binary_model(multilayer, features, targets, epochs=multilayer_epochs,
+                       learning_rate=0.05, log_every=5000)
+    return single, multilayer
 
-print(f'Accuracy: {100 * correct / total:.2f}%')
 
-# Analyze misclassified samples
-misclassified = []
-with torch.no_grad():
-    for inputs, targets in test_loader:
-        inputs, targets = inputs.to(device), targets.to(device)
-        outputs = model(inputs)
-        _, predicted = torch.max(outputs.data, 1)
-        for i in range(len(targets)):
-            if predicted[i] != targets[i]:
-                misclassified.append((inputs[i], predicted[i], targets[i]))
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
 
-print(f'Misclassified samples: {len(misclassified)}')
 
-# Visualize misclassified samples
-for i in range(6):
-    plt.subplot(2, 3, i + 1)
-    plt.imshow(misclassified[i][0].cpu().numpy().reshape(28, 28), cmap='gray')
-    plt.title(f'Pred: {misclassified[i][1].item()}, True: {misclassified[i][2].item()}')
-    plt.axis('off')
-plt.show()
+def tanh(x):
+    return np.tanh(x)
+
+
+def relu(x):
+    return np.maximum(0, x)
+
+
+def leaky_relu(x, alpha=0.01):
+    return np.where(x > 0, x, x * alpha)
+
+
+def plot_activation_functions():
+    x = np.linspace(-10, 10, 100)
+    curves = [
+        ("Sigmoid Function", {"": sigmoid(x)}),
+        ("Tanh Function", {"": tanh(x)}),
+        ("ReLU and Leaky ReLU Functions", {"ReLU": relu(x), "Leaky ReLU": leaky_relu(x)}),
+    ]
+    figures = []
+    for title, values in curves:
+        fig, ax = plt.subplots()
+        for label, outputs in values.items():
+            ax.plot(x, outputs, label=label or None)
+        ax.set(title=title, xlabel="Input", ylabel="Output")
+        ax.grid(True)
+        if ax.get_legend_handles_labels()[1]:
+            ax.legend()
+        fig.tight_layout()
+        figures.append(fig)
+    return figures
+
+
+def create_iris_loaders():
+    iris = load_iris()
+    train_x, test_x, train_y, test_y = train_test_split(
+        iris.data, iris.target, test_size=0.2, random_state=42,
+    )
+    scaler = StandardScaler()
+    train_x = torch.tensor(scaler.fit_transform(train_x), dtype=torch.float32)
+    test_x = torch.tensor(scaler.transform(test_x), dtype=torch.float32)
+    train_y = torch.tensor(train_y, dtype=torch.long)
+    test_y = torch.tensor(test_y, dtype=torch.long)
+    return (
+        DataLoader(TensorDataset(train_x, train_y), batch_size=32, shuffle=True),
+        DataLoader(TensorDataset(test_x, test_y), batch_size=len(test_y)),
+    )
+
+
+def run_iris_classification(*, epochs=5000):
+    train_loader, test_loader = create_iris_loaders()
+    model = SimpleModel()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.005)
+    train_classifier(model, train_loader, optimizer, nn.CrossEntropyLoss(),
+                      epochs=epochs, log_every=100)
+    accuracy, _ = evaluate_classifier(model, test_loader)
+    print(f"Test Accuracy: {accuracy * 100:.2f}%")
+    return model
+
+
+def demonstrate_tensors():
+    print(torch.tensor([1, 2, 3]))
+    print(torch.zeros(3, 3))
+    print(torch.ones(2, 2))
+    print(torch.randn(2, 2))
+    first = torch.tensor([1, 2, 3])
+    second = torch.tensor([4, 5, 6])
+    print(first + second)
+    print(first * second)
+    if torch.cuda.is_available():
+        print(first.to("cuda"))
+    x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+    y = x + 2
+    z = (y * y * 2).mean()
+    z.backward()
+    print(x.grad)
+
+
+def create_mnist_loaders(*, root="./data"):
+    from torchvision import datasets, transforms
+
+    transform = transforms.Compose([
+        transforms.RandomRotation(10), transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,)),
+    ])
+    train_data = datasets.MNIST(root, train=True, download=True, transform=transform)
+    test_data = datasets.MNIST(root, train=False, download=True, transform=transform)
+    return (
+        DataLoader(train_data, batch_size=64, shuffle=True),
+        DataLoader(test_data, batch_size=1000, shuffle=False),
+    )
+
+
+def plot_samples(images, labels, *, count=6):
+    count = min(count, len(images))
+    return plot_image_grid([image.cpu().numpy().squeeze() for image in images[:count]],
+                            [f"Label: {label.item()}" for label in labels[:count]])
+
+
+def plot_misclassified(errors, *, count=6):
+    samples = errors[:count]
+    return plot_image_grid([image.numpy().squeeze() for image, _, _ in samples],
+                            [f"Pred: {prediction}, True: {target}"
+                             for _, prediction, target in samples])
+
+
+def run_mnist_classification(*, epochs=5, root="./data"):
+    train_loader, test_loader = create_mnist_loaders(root=root)
+    images, labels = next(iter(train_loader))
+    plot_samples(images, labels)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+    model = MNISTModel().to(device)
+    print(model)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    train_classifier(model, train_loader, optimizer, nn.CrossEntropyLoss(), epochs=epochs)
+    accuracy, errors = evaluate_classifier(model, test_loader, collect_errors=True)
+    print(f"Accuracy: {100 * accuracy:.2f}%")
+    print(f"Misclassified samples: {len(errors)}")
+    plot_misclassified(errors)
+    return model
+
+
+def main():
+    examples = {
+        "models": show_models,
+        "xor": run_xor_comparison,
+        "activations": plot_activation_functions,
+        "iris": run_iris_classification,
+        "tensors": demonstrate_tensors,
+        "mnist": run_mnist_classification,
+    }
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("example", nargs="?", default="all", choices=["all", *examples])
+    args = parser.parse_args()
+    actions = examples.values() if args.example == "all" else [examples[args.example]]
+    for action in actions:
+        action()
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()

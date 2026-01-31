@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
+"""A feedforward network with dropout."""
 
-# %%
 import torch
 import torch.nn as nn
 
-# Create a simple model with a dropout layer
+
 class MyModel(nn.Module):
     def __init__(self):
         super(MyModel, self).__init__()
@@ -18,3 +17,10 @@ class MyModel(nn.Module):
         x = torch.relu(x)
         x = self.fc2(x)
         return x
+
+
+def main():
+    print(MyModel())
+
+if __name__ == "__main__":
+    main()
