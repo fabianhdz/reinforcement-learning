@@ -1,50 +1,52 @@
-# -*- coding: utf-8 -*-
+"""Small, independently callable examples of PyTorch tensor operations."""
 
-# %%
 import torch
-print(torch.__version__)
-print(torch.tensor([[1, 2], [3, 4]])) # Create a 2D tensor
-print(torch.tensor([[1, 2], [3, 4]], device='cuda:0')) # Generating a tensor on the GPU
-print(torch.tensor([[1, 2], [3, 4]], dtype=torch.float64)) # Create a tensor using dtype
 
-# %%
-temp = torch.tensor([[1, 2],[3, 4]])
-print(temp.numpy()) # Convert tensor to ndarray
-temp = torch.tensor([[1, 2],[3, 4]], device='cuda:0')
-print(temp.to('cpu').numpy()) # Convert tensor on GPU to tensor on CPU, and then convert to ndarray
 
-# %%
-t = torch.FloatTensor([1, 2, 3, 4, 5, 6, 7])
-print(t[0], t[1], t[-1])
-print(t[2:5], t[4:])
+def show_tensors(device):
+    print(torch.__version__)
+    print(torch.tensor([[1, 2], [3, 4]]))
+    print(torch.tensor([[1, 2], [3, 4]], device=device))
+    print(torch.tensor([[1, 2], [3, 4]], dtype=torch.float64))
 
-# %%
-t1 = torch.tensor([1, 2, 3])
-t2 = torch.tensor([4, 5, 6])
-t3 = t1 + t2
-print(t3)
 
-# %%
-# reshaping tensor
-tensor = torch.arange(10)
-print(tensor)
-reshaped = tensor.view(2, 5)
-print(reshaped)
-print('\n')
+def show_numpy_conversion(device):
+    tensor = torch.tensor([[1, 2], [3, 4]])
+    print(tensor.numpy())
+    tensor = torch.tensor([[1, 2], [3, 4]], device=device)
+    print(tensor.to("cpu").numpy())
 
-# stacking tensors
-tensor1 = torch.Tensor([1,2,3])
-tensor2 = torch.Tensor([4,5,6])
-stacked = torch.stack((tensor1, tensor2))
-print(stacked)
-print('\n')
 
-# concatenating tensors
-cat = torch.cat((tensor1, tensor2))
-print(cat)
-print('\n')
+def show_indexing():
+    tensor = torch.FloatTensor([1, 2, 3, 4, 5, 6, 7])
+    print(tensor[0], tensor[1], tensor[-1])
+    print(tensor[2:5], tensor[4:])
 
-# transposing tensor
-tensor = torch.Tensor([[1,2,3],[4,5,6]])
-transposed = tensor.t()
-print(transposed)
+
+def show_addition():
+    first = torch.tensor([1, 2, 3])
+    second = torch.tensor([4, 5, 6])
+    print(first + second)
+
+
+def show_shape_operations():
+    tensor = torch.arange(10)
+    print(tensor)
+    print(tensor.view(2, 5))
+    first = torch.Tensor([1, 2, 3])
+    second = torch.Tensor([4, 5, 6])
+    print(torch.stack((first, second)))
+    print(torch.cat((first, second)))
+    print(torch.Tensor([[1, 2, 3], [4, 5, 6]]).t())
+
+
+def main():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    show_tensors(device)
+    show_numpy_conversion(device)
+    show_indexing()
+    show_addition()
+    show_shape_operations()
+
+if __name__ == "__main__":
+    main()

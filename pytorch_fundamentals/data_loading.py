@@ -1,30 +1,12 @@
-# -*- coding: utf-8 -*-
+"""Load image and CSV datasets through PyTorch data loaders."""
 
-# %%
-import torchvision.transforms as transforms
-
-mnist_transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,), (1.0,))
-])
-
-from torchvision.datasets import MNIST
-from torch.utils.data import DataLoader
-import requests
-
-download_root = './data/mnist'
-train_dataset = MNIST(download_root, transform=mnist_transform, train=True, download=True)
-test_dataset = MNIST(download_root, transform=mnist_transform, train=False, download=True)
-dataset = DataLoader(train_dataset, batch_size=5, shuffle=True)
-for x, y in dataset:
-    print('x =', x)
-    print('y =', y)
-
-# %%
 import pandas as pd
 import torch
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
+from torch.utils.data import Dataset, DataLoader
+
+
+IRIS_CSV_URL = "https://raw.githubusercontent.com/dkims/CSCI4341/main/iris.csv"
+
 
 class CustomDataset(Dataset):
     def __init__(self, csv_file):
@@ -37,13 +19,42 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, index):
         # return a sample from the dataset at a given index
-        x = torch.tensor(self.data.iloc[index, 0:4], dtype=float)
+        x = torch.tensor(self.data.iloc[index, 0:4].to_numpy(), dtype=float)
         y = torch.tensor(self.data.iloc[index, 4], dtype=float)
         return x, y
 
-url = 'https://raw.githubusercontent.com/dkims/CSCI4341/main/iris.csv'
-tensor_dataset = CustomDataset(url)
-dataset = DataLoader(tensor_dataset, batch_size=5, shuffle=True)
-for x, y in dataset:
-    print('x =', x)
-    print('y =', y)
+
+def print_batches(dataloader, *, max_batches=None):
+    for index, (features, targets) in enumerate(dataloader):
+        if max_batches is not None and index >= max_batches:
+            break
+        print("x =", features)
+        print("y =", targets)
+
+
+def show_mnist_batches(*, root="./data/mnist", batch_size=5, max_batches=3):
+    from torchvision import datasets, transforms
+
+    transform = transforms.Compose([
+        transforms.ToTensor(), transforms.Normalize((0.5,), (1.0,)),
+    ])
+    train_data = datasets.MNIST(root, train=True, download=True, transform=transform)
+    test_data = datasets.MNIST(root, train=False, download=True, transform=transform)
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
+    print_batches(train_loader, max_batches=max_batches)
+    return train_loader, test_loader
+
+
+def show_csv_batches(csv_file=IRIS_CSV_URL, *, batch_size=5, max_batches=None):
+    loader = DataLoader(CustomDataset(csv_file), batch_size=batch_size, shuffle=True)
+    print_batches(loader, max_batches=max_batches)
+    return loader
+
+
+def main():
+    show_mnist_batches()
+    show_csv_batches()
+
+if __name__ == "__main__":
+    main()

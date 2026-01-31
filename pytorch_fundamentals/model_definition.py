@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
+"""Two ways to define a small feedforward network."""
 
-# %%
 import torch.nn as nn
+import torch.nn.functional as F
+
 
 class Model(nn.Module):
     def __init__(self):
@@ -19,10 +20,6 @@ class Model(nn.Module):
         x = self.layer2(x)
         return x
 
-model = Model()
-
-# %%
-import torch.nn.functional as F
 
 class Model2(nn.Module):
     def __init__(self):
@@ -35,5 +32,14 @@ class Model2(nn.Module):
         x = self.fc2(x)
         return x
 
-model2 = Model2()
 
+def create_models():
+    return Model(), Model2()
+
+
+def main():
+    for model in create_models():
+        print(model)
+
+if __name__ == "__main__":
+    main()
