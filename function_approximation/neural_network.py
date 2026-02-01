@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
+"""Approximate a noisy nonlinear function with a neural network."""
 
-# %%
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import numpy as np
-import matplotlib.pyplot as plt
+
 
 class Model(nn.Module):
     def __init__(self):
@@ -23,39 +23,44 @@ class Model(nn.Module):
         x = self.fc4(x)
         return x
 
+
 def true_fun(X):
     noise = np.random.rand(X.shape[0]) * 0.4 - 0.2
     return np.cos(1.5 * np.pi * X) + X + noise
 
+
+def train_model(model, *, steps=10000, learning_rate=0.001):
+    data_x = np.random.rand(10000) * 5
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    for _ in range(steps):
+        batch_x = np.random.choice(data_x, 32)
+        inputs = torch.from_numpy(batch_x).float().unsqueeze(1)
+        targets = torch.from_numpy(true_fun(batch_x)).float().unsqueeze(1)
+        loss = F.mse_loss(model(inputs), targets)
+        optimizer.zero_grad()
+        loss.mean().backward()
+        optimizer.step()
+    return model
+
+
 def plot_results(model):
     x = np.linspace(0, 5, 100)
-    input_x = torch.from_numpy(x).float().unsqueeze(1)
-    plt.plot(x, true_fun(x), label="Truth")
-    plt.plot(x, model(input_x).detach().numpy(), label="Prediction")
-    plt.legend(loc='lower right',fontsize=15)
-    plt.xlim((-0.2, 5.5))
-    plt.ylim((-1, 6))
-    plt.grid()
+    with torch.no_grad():
+        predictions = model(torch.from_numpy(x).float().unsqueeze(1)).numpy().ravel()
+    fig, ax = plt.subplots()
+    ax.plot(x, true_fun(x), label="Truth")
+    ax.plot(x, predictions, label="Prediction")
+    ax.set(xlim=(-0.2, 5.5), ylim=(-1, 6))
+    ax.legend(loc="lower right", fontsize=15)
+    ax.grid(True)
+    fig.tight_layout()
+    return fig
+
 
 def main():
-    data_x = np.random.rand(10000) * 5 # random x
-    model = Model()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
-
-    for step in range(10000):
-        batch_x = np.random.choice(data_x, 32) # mini-batch
-        batch_x_tensor = torch.from_numpy(batch_x).float().unsqueeze(1) # tensor
-        pred = model(batch_x_tensor)
-
-        batch_y = true_fun(batch_x)
-        truth = torch.from_numpy(batch_y).float().unsqueeze(1)
-        loss = F.mse_loss(pred, truth) # loss
-
-        optimizer.zero_grad()
-        loss.mean().backward() # gradient calculation by backpropagation
-        optimizer.step() # parameter update
-
+    model = train_model(Model())
     plot_results(model)
+    plt.show()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
