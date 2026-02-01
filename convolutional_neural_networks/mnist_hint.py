@@ -1,25 +1,8 @@
-# -*- coding: utf-8 -*-
+"""Convolutional MNIST classification."""
 
-# %%
-import torchvision.transforms as transforms
-
-mnist_transform = transforms.Compose([
-    transforms.ToTensor(),
-    #transforms.Normalize((0.5,), (1.0,))
-])
-
-from torchvision.datasets import MNIST
-from torch.utils.data import DataLoader
-import requests
-
-download_root = './data/mnist'
-train_dataset = MNIST(download_root, transform=mnist_transform, train=True, download=True)
-test_dataset = MNIST(download_root, transform=mnist_transform, train=False, download=True)
-batch_size = 200
-dataset_train = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-
-# %%
+import torch
 import torch.nn as nn
+
 
 class Model(nn.Module):
     def __init__(self):
@@ -49,37 +32,67 @@ class Model(nn.Module):
         x = self.layer3(x)
         return x
 
-# %%
-model = Model()
 
-from torch.optim import optimizer
-import torch
-import numpy as np
+def create_dataloaders(*, root="./data/mnist", batch_size=200):
+    from torch.utils.data import DataLoader
+    from torchvision import datasets, transforms
 
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-#scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer=optimizer, lr_lambda=lambda epoch: 0.99 ** epoch)
+    transform = transforms.Compose([transforms.ToTensor()])
+    train_data = datasets.MNIST(root, train=True, download=True, transform=transform)
+    test_data = datasets.MNIST(root, train=False, download=True, transform=transform)
+    return (
+        DataLoader(train_data, batch_size=batch_size, shuffle=True),
+        DataLoader(test_data, batch_size=batch_size, shuffle=False),
+    )
 
-# train
-n_epoch = 10
-for epoch in range(1, n_epoch+1):
-    train_losses = []
-    train_acc = []
-    for idx, (x, y) in enumerate(dataset_train):
-        optimizer.zero_grad()
-        pred = model(x)
-        loss = criterion(pred, y)
-        train_losses.append(loss.item())
-        train_acc.append( (torch.max(pred, 1)[1] == y).sum()/batch_size )
-        loss.backward()
-        optimizer.step()
-        #scheduler.step()
-    print('epoch: {}, loss:{}, acc:{}'.format(epoch, sum(train_losses)/(idx+1), sum(train_acc)/(idx+1) ))
 
-# %%
-dataset_test = DataLoader(test_dataset, batch_size=batch_size)
-test_acc = []
-for i, (x, y) in enumerate(dataset_test):
-    test_pred = model(x)
-    test_acc.append((torch.max(test_pred, 1)[1] == y).sum()/batch_size)
-print('test acc:{}'.format(sum(test_acc)/(len(test_acc) )) )
+def train_model(model, dataloader, *, epochs=10, learning_rate=0.01):
+    device = next(model.parameters()).device
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    criterion = nn.CrossEntropyLoss()
+    history = []
+    for epoch in range(1, epochs + 1):
+        model.train()
+        total_loss = correct = samples = 0
+        for inputs, targets in dataloader:
+            inputs, targets = inputs.to(device), targets.to(device)
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+            correct += (outputs.argmax(dim=1) == targets).sum().item()
+            samples += targets.size(0)
+        metrics = {"loss": total_loss / len(dataloader), "accuracy": correct / samples}
+        history.append(metrics)
+        print(f"Epoch {epoch}/{epochs}, loss: {metrics['loss']:.4f}, "
+              f"accuracy: {metrics['accuracy']:.4f}")
+    return history
+
+
+def evaluate_model(model, dataloader):
+    device = next(model.parameters()).device
+    was_training = model.training
+    model.eval()
+    correct = samples = 0
+    try:
+        with torch.no_grad():
+            for inputs, targets in dataloader:
+                inputs, targets = inputs.to(device), targets.to(device)
+                predictions = model(inputs).argmax(dim=1)
+                correct += (predictions == targets).sum().item()
+                samples += targets.size(0)
+    finally:
+        model.train(was_training)
+    return correct / samples
+
+
+def main():
+    train_loader, test_loader = create_dataloaders()
+    model = Model()
+    train_model(model, train_loader)
+    print(f"Test accuracy: {evaluate_model(model, test_loader):.4f}")
+
+if __name__ == "__main__":
+    main()

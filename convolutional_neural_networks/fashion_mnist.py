@@ -1,46 +1,21 @@
-# -*- coding: utf-8 -*-
+"""Dense and convolutional FashionMNIST classifiers."""
 
-# %%
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Variable
-import torchvision
-import torchvision.transforms as transforms # for data preprocessing
-from torch.utils.data import Dataset, DataLoader
-from torchsummary import summary
 
-# %%
-train_dataset = torchvision.datasets.FashionMNIST('./data', download=True, transform=transforms.Compose([transforms.ToTensor()]))
-test_dataset = torchvision.datasets.FashionMNIST('./data', download=True, train=False, transform=transforms.Compose([transforms.ToTensor()]))
 
-# %%
-batch_size = 1000
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
+LABELS = ("T-Shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal",
+          "Shirt", "Sneaker", "Bag", "Ankle Boot")
 
-# %%
-labels_map = {0:'T-Shirt', 1:'Trouser', 2:'Pullover', 3:'Dress', 4:'Coat', 5:'Sandal', 6:'Shirt', 7:'Sneaker', 8:'Bag', 9:'Ankle Boot'} # 10 classes
-fig = plt.figure(figsize=(8,8))
-columns = 4
-rows = 5
-for i in range(1, columns*rows + 1):
-    rand_idx = np.random.randint(len(train_dataset))
-    img = train_dataset[rand_idx][0][0,:,:] # extract image data [image index][x][image]
-    fig.add_subplot(rows, columns, i)
-    plt.title(labels_map[train_dataset[rand_idx][1]]) # train_dataset[rand_idx][1] is class number (0~9)
-    plt.axis('off')
-    plt.imshow(img, cmap='gray')
-plt.show()
 
-# %%
 class FashionDNN1(nn.Module):
     def __init__(self):
         super(FashionDNN1, self).__init__()
         self.fc1 = nn.Linear(in_features=784, out_features=256)
-        self.drop = nn.Dropout(0.25) # Please see Lecutre 16 or you can comment this line out
+        self.drop = nn.Dropout(0.25)
         self.fc2 = nn.Linear(in_features=256, out_features=128)
         self.fc3 = nn.Linear(in_features=128, out_features=10)
     def forward(self, input_data):
@@ -51,7 +26,7 @@ class FashionDNN1(nn.Module):
         out = self.fc3(out)
         return out
 
-# %%
+
 class FashionDNN2(nn.Module):
     def __init__(self):
         super(FashionDNN2, self).__init__()
@@ -73,7 +48,7 @@ class FashionDNN2(nn.Module):
         out = self.layer3(out)
         return out
 
-# %%
+
 class FashionDNN3(nn.Module):
     def __init__(self):
         super(FashionDNN3, self).__init__()
@@ -102,44 +77,85 @@ class FashionDNN3(nn.Module):
         x = self.layer3(x)
         return x
 
-model = FashionDNN3()
-#summary(model, (1, 28, 28))
 
-# %%
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = FashionDNN3().to(device)
+def create_dataloaders(*, root="./data", batch_size=1000):
+    from torch.utils.data import DataLoader
+    from torchvision import datasets, transforms
+
+    transform = transforms.Compose([transforms.ToTensor()])
+    train_data = datasets.FashionMNIST(root, train=True, download=True, transform=transform)
+    test_data = datasets.FashionMNIST(root, train=False, download=True, transform=transform)
+    return (
+        DataLoader(train_data, batch_size=batch_size, shuffle=False),
+        DataLoader(test_data, batch_size=batch_size, shuffle=False),
+    )
 
 
-# loss and optimizer
-from torch.optim import optimizer
-import torch
-import numpy as np
+def plot_samples(dataset, *, count=20):
+    samples = [dataset[np.random.randint(len(dataset))] for _ in range(count)]
+    columns = 4
+    rows = (count + columns - 1) // columns
+    fig, axes = plt.subplots(rows, columns, squeeze=False, figsize=(8, 8))
+    for index, ax in enumerate(axes.flat):
+        ax.axis("off")
+        if index < len(samples):
+            image, label = samples[index]
+            ax.imshow(image.squeeze().numpy(), cmap="gray")
+            ax.set_title(LABELS[label])
+    fig.tight_layout()
+    return fig
 
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-# train
-n_epoch = 10
-for epoch in range(1, n_epoch+1):
-    train_losses = []
-    train_acc = []
-    for idx, (x, y) in enumerate(train_loader):
-        x = x.to(device)
-        y = y.to(device)
-        optimizer.zero_grad()
-        pred = model(x)
-        loss = criterion(pred, y)
-        train_losses.append(loss.item())
-        train_acc.append( (torch.max(pred, 1)[1] == y).sum()/batch_size )
-        loss.backward()
-        optimizer.step()
-    print('epoch: {}, loss:{}, acc:{}'.format(epoch, sum(train_losses)/(idx+1), sum(train_acc)/(idx+1) ))
+def train_model(model, dataloader, *, epochs=10, learning_rate=0.01):
+    device = next(model.parameters()).device
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    criterion = nn.CrossEntropyLoss()
+    history = []
+    for epoch in range(1, epochs + 1):
+        model.train()
+        total_loss = correct = samples = 0
+        for inputs, targets in dataloader:
+            inputs, targets = inputs.to(device), targets.to(device)
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+            correct += (outputs.argmax(dim=1) == targets).sum().item()
+            samples += targets.size(0)
+        metrics = {"loss": total_loss / len(dataloader), "accuracy": correct / samples}
+        history.append(metrics)
+        print(f"Epoch {epoch}/{epochs}, loss: {metrics['loss']:.4f}, "
+              f"accuracy: {metrics['accuracy']:.4f}")
+    return history
 
-# %%
-test_acc = []
-for i, (x, y) in enumerate(test_loader):
-    x = x.to(device)
-    y = y.to(device)
-    test_pred = model(x)
-    test_acc.append((torch.max(test_pred, 1)[1] == y).sum()/batch_size)
-print('test acc:{}'.format(sum(test_acc)/(len(test_acc) )) )
+
+def evaluate_model(model, dataloader):
+    device = next(model.parameters()).device
+    was_training = model.training
+    model.eval()
+    correct = samples = 0
+    try:
+        with torch.no_grad():
+            for inputs, targets in dataloader:
+                inputs, targets = inputs.to(device), targets.to(device)
+                predictions = model(inputs).argmax(dim=1)
+                correct += (predictions == targets).sum().item()
+                samples += targets.size(0)
+    finally:
+        model.train(was_training)
+    return correct / samples
+
+
+def main():
+    train_loader, test_loader = create_dataloaders()
+    plot_samples(train_loader.dataset)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = FashionDNN3().to(device)
+    train_model(model, train_loader)
+    print(f"Test accuracy: {evaluate_model(model, test_loader):.4f}")
+    plt.show()
+
+if __name__ == "__main__":
+    main()
